@@ -53,19 +53,21 @@ func runTestEbpf(objs *ebpfObjects) {
 	fmt.Println(objs.M4.MaxEntries())
 	fmt.Println(objs.M4.String())
 
-	m, err := ebpf.NewMap(&ebpf.MapSpec{
-		Name:       "inner_map_001",
-		Type:       ebpf.Hash,
-		KeySize:    4,
-		ValueSize:  4,
-		MaxEntries: 4096,
-		Flags:      unix.BPF_F_NO_PREALLOC,
-	})
-	Throw(err)
+	for i := 0; i < 10; i++ {
+		m, err := ebpf.NewMap(&ebpf.MapSpec{
+			Name:       "default.inner_map_001",
+			Type:       ebpf.Hash,
+			KeySize:    4,
+			ValueSize:  4,
+			MaxEntries: 4096,
+			Flags:      unix.BPF_F_NO_PREALLOC,
+		})
+		Throw(err)
 
-	fmt.Println("create map ok.")
+		fmt.Println("create map ok.")
 
-	Throw(objs.M4.Update(uint32(1), m, ebpf.UpdateAny))
+		Throw(objs.M4.Update(uint32(i), m, ebpf.UpdateAny))
+	}
 
 	var k uint32
 	var mapId ebpf.MapID
