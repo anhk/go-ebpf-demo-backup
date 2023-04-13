@@ -60,7 +60,7 @@ func GetLookupTable(backendsMap map[string]*loadbalancer.Backend, m uint64) []in
 
 func main() {
 	bk := map[string]*loadbalancer.Backend{
-		"192.168.1.100": &loadbalancer.Backend{
+		"192.168.1.100": {
 			FEPortName: "",
 			ID:         100000100,
 			Weight:     15,
@@ -69,7 +69,7 @@ func main() {
 			State:     0,
 			Preferred: false,
 		},
-		"192.168.1.200": &loadbalancer.Backend{
+		"192.168.1.200": {
 			FEPortName: "",
 			ID:         100000200,
 			Weight:     10,
@@ -78,7 +78,7 @@ func main() {
 			State:     0,
 			Preferred: false,
 		},
-		"192.168.1.300": &loadbalancer.Backend{
+		"192.168.1.300": {
 			FEPortName: "",
 			ID:         100000300,
 			Weight:     10,
