@@ -69,6 +69,7 @@ func runTestEbpf(objs *ebpfObjects) {
 			ValueSize:  4,
 			MaxEntries: 4096,
 			Flags:      unix.BPF_F_NO_PREALLOC,
+			Contents:   make([]ebpf.MapKV, 0),
 		})
 		Throw(err)
 
@@ -85,5 +86,14 @@ func runTestEbpf(objs *ebpfObjects) {
 		Throw(err)
 
 		fmt.Println(innerMap.Info())
+
+		for j := 100; j < 110; j++ {
+			innerMap.Update(uint32(j), uint32(j+200), ebpf.UpdateAny)
+		}
+
+		var kk, vv uint32
+		for iter := innerMap.Iterate(); iter.Next(&kk, &vv); {
+			fmt.Printf("kk=%v, vv=%v\n", kk, vv)
+		}
 	}
 }

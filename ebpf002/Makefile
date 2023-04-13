@@ -6,9 +6,12 @@ SRC = main.go ebpf_bpfel.go
 
 all: $(OBJ)
 
-$(OBJ):
+$(OBJ): generate
 	go mod tidy && go build -gcflags "-N -l" -o $@ ./$(SRC)
 	@#cp -af $(OBJ) ./docker/
+
+generate: ebpf.c 
+	go generate
 
 clean:
 	rm -fr $(OBJ)
@@ -16,5 +19,5 @@ clean:
 -include .deps
 dep:
 	echo -n "$(OBJ):" > .deps
-	find src -name '*.go' | awk '{print $$0 " \\"}' >> .deps
+	find . -name '*.go' | awk '{print $$0 " \\"}' >> .deps
 	echo "" >> .deps

@@ -29,6 +29,14 @@ int bpf_prog(void* ctx)
     }
     bpf_printk("find.");
     // bpf_printk("hello ebpf.");
+
+    __u32 k2 = 100;
+    void* v = map_lookup_elem(svc, &k2);
+    if (v == NULL) {
+        return 0;
+    }
+    bpf_printk("v=%d", *(__u32*)v);
+
     return 0;
 }
 

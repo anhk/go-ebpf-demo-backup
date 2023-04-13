@@ -1,0 +1,4 @@
+ebpf002:./main.go \
+./ebpf_bpfel.go \
+./ebpf_bpfeb.go \
+
