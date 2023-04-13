@@ -9,6 +9,7 @@ import (
 	"runtime/debug"
 
 	"github.com/cilium/ebpf"
+	"github.com/cilium/ebpf/link"
 	"github.com/cilium/ebpf/rlimit"
 	"golang.org/x/sys/unix"
 )
@@ -27,8 +28,15 @@ func main() {
 	}
 	defer objs.Close()
 
+	// register `kprobe` hook
+	kp, err := link.Kprobe("sys_execve", objs.BpfProg, nil)
+	Throw(err)
+	defer kp.Close()
+
+	// run test ebpf map
 	go runTestEbpf(objs)
 
+	// print debug info
 	f, _ := os.OpenFile("/sys/kernel/debug/tracing/trace_pipe", os.O_RDONLY, os.ModePerm)
 	defer f.Close()
 	reader := bufio.NewReader(f)

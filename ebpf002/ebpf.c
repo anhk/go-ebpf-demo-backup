@@ -18,4 +18,11 @@ struct {
     });
 } m4 SEC(".maps");
 
+SEC("kprobe/sys_execve")
+int bpf_prog(void* ctx)
+{
+    bpf_printk("hello ebpf.");
+    return 0;
+}
+
 char __license[] SEC("license") = "GPL";
