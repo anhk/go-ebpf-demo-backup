@@ -1,6 +1,7 @@
 
 #include <linux/bpf.h>
 #include "inc/bpf_helpers.h"
+#include "inc/common.h"
 
 struct {
     __uint(type, BPF_MAP_TYPE_HASH_OF_MAPS);
@@ -21,7 +22,13 @@ struct {
 SEC("kprobe/sys_execve")
 int bpf_prog(void* ctx)
 {
-    bpf_printk("hello ebpf.");
+    __u32 key = 1;
+    void* svc = map_lookup_elem(&m4, &key);
+    if (svc == NULL) { // not found
+        return 0;
+    }
+    bpf_printk("find.");
+    // bpf_printk("hello ebpf.");
     return 0;
 }
 
