@@ -1,7 +1,7 @@
 
 //go:build ignore
 #include <linux/bpf.h>
-#include "bpf_helpers.h"
+#include "../bpf_helpers.h"
 
 SEC("tracepoint/syscalls/sys_enter_openat")
 int bpf_printk_prog(void *ctx){

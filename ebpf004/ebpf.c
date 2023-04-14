@@ -1,6 +1,6 @@
 #include <linux/bpf.h>
-#include "inc/bpf_helpers.h"
-#include "inc/common.h"
+#include "../inc/bpf_helpers.h"
+#include "../inc/common.h"
 
 // struct {
 //     __uint(type, BPF_MAP_TYPE_HASH_OF_MAPS);
