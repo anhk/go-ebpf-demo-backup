@@ -1,6 +1,6 @@
 # go-ebpf-demo
 
-In Windows WSL:
+In Windows WSL (Ubuntu):
 
 ```bash
 $ mount -t bpf bpffs /sys/fs/bpf
