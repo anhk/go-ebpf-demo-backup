@@ -47,10 +47,13 @@ int inet_sock_set_state(void* ctx)
     }
 
     if (args.family == AF_INET) {
+        // bpf_printk 只支持三个参数 --> bpf_trace_printk支持5个，fmt及sizeof(fmt)占掉2个
         bpf_printk("  it's ipv4, [%pI4 -> %pI4]", args.saddr, args.daddr);
+        bpf_printk("             port: %d -> %d", args.sport, args.dport);
     } else if (args.family == AF_INET6) {
         bpf_printk("  it's ipv6, [%pI6 -> %pI6]", args.saddr, args.daddr);
-    }
+        bpf_printk("             port: %d -> %d", args.sport, args.dport);
+   }
 
     return 0;
 }
