@@ -29,11 +29,6 @@ func main() {
 	}))
 	defer objs.Close()
 
-	// print debug info
-	f, err := os.OpenFile("/sys/kernel/debug/tracing/trace_pipe", os.O_RDONLY, os.ModePerm)
-	Throw(err)
-	defer f.Close()
-
 	fmt.Println("cgroup2 path: ", *cg)
 	// attach cgroup
 	l, err := link.AttachCgroup(link.CgroupOptions{
@@ -43,6 +38,16 @@ func main() {
 	})
 	Throw(err)
 	defer l.Close()
+
+	// pin
+	if err := l.Pin(fmt.Sprintf("/sys/fs/bpf/connect4")); err != nil {
+		fmt.Println("pin failed:", err)
+	}
+
+	// print debug info
+	f, err := os.OpenFile("/sys/kernel/debug/tracing/trace_pipe", os.O_RDONLY, os.ModePerm)
+	Throw(err)
+	defer f.Close()
 
 	reader := bufio.NewReader(f)
 	for {
