@@ -33,6 +33,7 @@ func main() {
 	Throw(err)
 	defer f.Close()
 
+	fmt.Println("cgroup2 path: ", *cg)
 	// attach cgroup
 	l, err := link.AttachCgroup(link.CgroupOptions{
 		Path:    *cg,
