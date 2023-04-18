@@ -19,6 +19,7 @@ func main() {
 	// FIXME: check cgroups
 
 	cg := flag.String("cgroup2", "/sys/fs/cgroup", "cgroup2 path")
+	flag.Parse()
 
 	Throw(rlimit.RemoveMemlock())
 
