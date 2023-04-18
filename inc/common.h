@@ -77,8 +77,10 @@ struct pt_regs {
 
 
 #define BPF_F_NO_PREALLOC (1U << 0)
-#define BPF_F_CURRENT_CPU (0xffffffffULL)
 
+#ifndef BPF_F_CURRENT_CPU
+#define BPF_F_CURRENT_CPU (0xffffffffULL)
+#endif
 
 static void *(*map_lookup_elem)(const void *map, const void *key) = (void *)1;
 

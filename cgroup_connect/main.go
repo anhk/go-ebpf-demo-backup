@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -17,6 +18,8 @@ import (
 func main() {
 	// FIXME: check cgroups
 
+	cg := flag.String("cgroup2", "/sys/fs/cgroup", "cgroup2 path")
+
 	Throw(rlimit.RemoveMemlock())
 
 	objs := &ebpfObjects{}
@@ -31,9 +34,8 @@ func main() {
 	defer f.Close()
 
 	// attach cgroup
-
 	l, err := link.AttachCgroup(link.CgroupOptions{
-		Path:    "/sys/fs/cgroup",
+		Path:    *cg,
 		Attach:  ebpf.AttachCGroupInet4Connect,
 		Program: objs.SockConnect4,
 	})
