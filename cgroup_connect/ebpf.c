@@ -9,11 +9,10 @@
 SEC("cgroup/connect4")
 int sock_connect4(struct bpf_sock_addr* ctx)
 {
-    if (ctx->family != 2) {
+    if (ctx->family != 2) { // AF_INET ? 
         return SYS_PROCEED;
     }
     bpf_printk("connect: %pI4:%d", ctx->user_ip4, __bpf_ntohs(ctx->user_port));
-    // bpf_printk("%pI4", ctx->msg_src_ip4);
     return SYS_PROCEED;
 }
 

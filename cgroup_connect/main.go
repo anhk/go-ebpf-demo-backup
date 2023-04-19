@@ -63,6 +63,6 @@ func Throw(e any) {
 	if e != nil {
 		fmt.Printf("%s\n", e)
 		fmt.Printf("%s\n", debug.Stack())
-		panic(e)
+		os.Exit(-1)
 	}
 }
