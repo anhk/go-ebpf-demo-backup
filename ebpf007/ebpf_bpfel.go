@@ -54,8 +54,8 @@ type ebpfSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type ebpfProgramSpecs struct {
-	EgressDrop  *ebpf.ProgramSpec `ebpf:"egress_drop"`
-	IngressDrop *ebpf.ProgramSpec `ebpf:"ingress_drop"`
+	IngressDrop1 *ebpf.ProgramSpec `ebpf:"ingress_drop_1"`
+	IngressDrop2 *ebpf.ProgramSpec `ebpf:"ingress_drop_2"`
 }
 
 // ebpfMapSpecs contains maps before they are loaded into the kernel.
@@ -93,14 +93,14 @@ func (m *ebpfMaps) Close() error {
 //
 // It can be passed to loadEbpfObjects or ebpf.CollectionSpec.LoadAndAssign.
 type ebpfPrograms struct {
-	EgressDrop  *ebpf.Program `ebpf:"egress_drop"`
-	IngressDrop *ebpf.Program `ebpf:"ingress_drop"`
+	IngressDrop1 *ebpf.Program `ebpf:"ingress_drop_1"`
+	IngressDrop2 *ebpf.Program `ebpf:"ingress_drop_2"`
 }
 
 func (p *ebpfPrograms) Close() error {
 	return _EbpfClose(
-		p.EgressDrop,
-		p.IngressDrop,
+		p.IngressDrop1,
+		p.IngressDrop2,
 	)
 }
 

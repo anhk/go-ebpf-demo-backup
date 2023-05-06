@@ -1,12 +1,10 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net"
 	"os"
 	"runtime/debug"
-	"time"
 
 	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/rlimit"
@@ -68,35 +66,71 @@ func main() {
 		tc.Attribute{Kind: "clsact"},
 	}
 	Throw(tcnl.Qdisc().Add(&qdisc))
-	defer tcnl.Qdisc().Delete(&qdisc)
 
-	info, _ := objs.IngressDrop.Info()
-	filter := tc.Object{
-		tc.Msg{
-			Family:  unix.AF_UNSPEC,
-			Ifindex: uint32(devId.Index),
-			Handle:  0,
-			Parent:  0xfffffff2,
-			Info:    0x10300,
-		},
-		tc.Attribute{
-			Kind: "bpf",
-			BPF: &tc.Bpf{
-				FD:    ptrHelper[uint32](uint32(objs.IngressDrop.FD())),
-				Name:  &info.Name,
-				Flags: ptrHelper[uint32](0x1),
+	// defer tcnl.Qdisc().Delete(&qdisc)
+
+	{
+		info, _ := objs.IngressDrop1.Info()
+		filter := tc.Object{
+			tc.Msg{
+				Family:  unix.AF_UNSPEC,
+				Ifindex: uint32(devId.Index),
+				Handle:  0,
+				Parent:  0xfffffff2,
+				Info:    0x10300,
 			},
-		},
+			tc.Attribute{
+				Kind: "bpf",
+				BPF: &tc.Bpf{
+					FD:    ptrHelper[uint32](uint32(objs.IngressDrop1.FD())),
+					Name:  &info.Name,
+					Flags: ptrHelper[uint32](0x1),
+				},
+			},
+		}
+
+		Throw(tcnl.Filter().Add(&filter))
 	}
 
-	Throw(tcnl.Filter().Add(&filter))
+	{
+		info, _ := objs.IngressDrop2.Info()
+		filter := tc.Object{
+			tc.Msg{
+				Family:  unix.AF_UNSPEC,
+				Ifindex: uint32(devId.Index),
+				Handle:  0,
+				// Parent: 0xfffffff1只允许添加一个
+				Parent: 0xfffffff2, // 如果Parent不一样，
+				Info:   0x10300,
+			},
+			tc.Attribute{
+				Kind: "bpf",
+				BPF: &tc.Bpf{
+					FD:    ptrHelper[uint32](uint32(objs.IngressDrop2.FD())),
+					Name:  &info.Name,
+					Flags: ptrHelper[uint32](0x1),
+				},
+			},
+		}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+		Throw(tcnl.Filter().Add(&filter))
+	}
+	// DEBUG
+	qdiscs, err := tcnl.Qdisc().Get()
+	Throw(err)
+	for _, qdisc := range qdiscs {
+		fmt.Println("======")
+		fmt.Printf("msg: {iface: %d, handle: %0#x, parent: %0#x, info: %d} attr {kind: %v}\n",
+			qdisc.Ifindex, qdisc.Handle, qdisc.Parent, qdisc.Info,
+			qdisc.Kind)
+	}
+	// DEBUG END
+	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	// defer cancel()
 
-	<-ctx.Done()
+	// <-ctx.Done()
 
-	tcnl.Filter().Delete(&filter)
+	// tcnl.Filter().Delete(&filter)
 }
 
 func ptrHelper[T any](v T) *T {
